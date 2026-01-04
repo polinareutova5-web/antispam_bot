@@ -1,5 +1,5 @@
-const BOT_TOKEN = "8258597359:AAGvZgFoacBjSHzw0GlgDYr-vW1r9vZ3nK4";
-const SPREADSHEET_ID = "1I8QeHQvuOWzXiZfpyFZrGE2DEww1sTQFlu_kO8YX3AY";
+const BOT_TOKEN = "Ваш_токен_вставляйте_сюда";
+const SPREADSHEET_ID = "сюда_айди_таблицы";
 
 const MAT_WORDS = ["бля", "хуй", "пизд", "ебать", "сука", "нахуй", "пидор", "говно"];
 
@@ -45,6 +45,6 @@ function logViolation(date, userId, name, text) {
 }
 
 function setWebhook() {
-  const url = "https://script.google.com/macros/s/AKfycbzO47UxXSk0yWom5ny_0dukyNWc0c5qZVX0DhaTp7U3nat7a0A3toBKDRKcuq_vSgR6/exec";
+  const url = "https://script.google.com/macros/s/блаблаблабла/exec";
   UrlFetchApp.fetch(`https://api.telegram.org/bot${BOT_TOKEN}/setWebhook?url=${url}`);
 }
