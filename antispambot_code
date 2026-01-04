@@ -1,0 +1,50 @@
+const BOT_TOKEN = "8258597359:AAGvZgFoacBjSHzw0GlgDYr-vW1r9vZ3nK4";
+const SPREADSHEET_ID = "1I8QeHQvuOWzXiZfpyFZrGE2DEww1sTQFlu_kO8YX3AY";
+
+const MAT_WORDS = ["бля", "хуй", "пизд", "ебать", "сука", "нахуй", "пидор", "говно"];
+
+function doPost(e) {
+  const data = JSON.parse(e.postData.contents);
+  const msg = data.message;
+  if (!msg || !msg.text || !msg.chat || msg.chat.type === "private") return;
+
+  const chatId = msg.chat.id;
+  const text = msg.text.toLowerCase();
+  const userId = msg.from.id;
+  const firstName = msg.from.first_name || "Пользователь";
+
+  if (MAT_WORDS.some(word => text.includes(word))) {
+    deleteMessage(chatId, msg.message_id);
+    sendMessage(chatId, `⚠️ ${firstName}, не ругайтесь, пожалуйста.`);
+    // Опционально: логируем
+    logViolation(new Date(), userId, firstName, text);
+  }
+}
+
+function sendMessage(chatId, text) {
+  UrlFetchApp.fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+    method: "post",
+    headers: {"Content-Type": "application/json"},
+    payload: JSON.stringify({chat_id: chatId, text: text})
+  });
+}
+
+function deleteMessage(chatId, msgId) {
+  try {
+    UrlFetchApp.fetch(`https://api.telegram.org/bot${BOT_TOKEN}/deleteMessage`, {
+      method: "post",
+      headers: {"Content-Type": "application/json"},
+      payload: JSON.stringify({chat_id: chatId, message_id: msgId})
+    });
+  } catch (e) {}
+}
+
+function logViolation(date, userId, name, text) {
+  const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getActiveSheet();
+  sheet.appendRow([date, userId, name, text]);
+}
+
+function setWebhook() {
+  const url = "https://script.google.com/macros/s/AKfycbzO47UxXSk0yWom5ny_0dukyNWc0c5qZVX0DhaTp7U3nat7a0A3toBKDRKcuq_vSgR6/exec";
+  UrlFetchApp.fetch(`https://api.telegram.org/bot${BOT_TOKEN}/setWebhook?url=${url}`);
+}
